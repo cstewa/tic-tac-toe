@@ -38,9 +38,9 @@ $(document).ready(function(){
 
 	var pass_tile_id = function(tile) {
 		if (player_1.hasClass('your_turn')) {
-			player1_array.push(tile.attr("id"));
+			player1_array.push(parseInt(tile.attr("id")));
 		} else {
-			player2_array.push(tile.attr("id"));
+			player2_array.push(parseInt(tile.attr("id")));
 			check_winner(player2_array);
 		};
 	}
@@ -49,18 +49,38 @@ var check_winner = function(user_array) {
 	$.each(win_arrays, function(index, w) {
     counter = 0;
     $.each(w, function(x, tile) {
-        if ($.inArray(tile, user_array) == 1) {
+        if ($.inArray(tile, user_array) > -1) {
           counter += 1
         }
     		if (counter == 3) {
        		// match  
-        	console.log('winner')
-    		} else {
-        console.log('nope')
-    		}
+        	handle_winner()
+    		} 
 		});
 	});
 };
+
+var new_game = function() {
+	window.location.href = window.location.href;
+};
+
+var handle_winner = function () {
+	if(confirm("You Won! Click OK to start a new game")){
+		new_game();
+	}
+}
+
+var check_tie = function() {
+	if (check_winner != handle_winner && (player1_array.length + player2_array.length) == 9) {
+		handle_tie();
+	}
+}
+
+var handle_tie = function () {
+	if(confirm("Tie Game! Click OK to start a new game")){
+		new_game();
+	}
+}
 
   var move = function() {
 		$('.tile').on('click', function() {
@@ -72,6 +92,7 @@ var check_winner = function(user_array) {
 				pass_tile_id(tile);
 				check_winner(player1_array);
 				check_winner(player2_array);
+				check_tie();
 				// player one's turn
 				if (player_1.hasClass('your_turn')) { 
 					player_2.addClass('your_turn');
